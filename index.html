@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Server date/time</title>
+</head>
+
+<body>
+
+  <div id="info"></div>
+  <div id="info1"></div>
+  <div id="info2"></div>
+  <div id="departures"></div>
+  <div id="info4"></div>
+  <div id="info5"></div>
+
+  <script language="javascript">
+
+    const info = document.getElementById('info');
+    const info1 = document.getElementById('info1');
+    const info2 = document.getElementById('info2');   
+    const departurediv = document.getElementById('departures');
+    const info4 = document.getElementById('info4');
+    const info5 = document.getElementById('info5');
+     
+     const url5 = 'https://cors-anywhere.herokuapp.com/https://api.kanye.rest/';
+     const url4 = 'https://cors-anywhere.herokuapp.com/https://newsapi.org/v2/top-headlines?sources=bbc-news&apiKey=5050fc536a934d6ba532b7662c49fb01';
+     const url3 = 'https://cors-anywhere.herokuapp.com/http://api.sl.se/api2/realtimedeparturesV4.json?key=ca230aef922344bfaa6366215c3903be&siteid=9192&timewindow=10';
+     const url2 = 'https://cors-anywhere.herokuapp.com/https://api.exchangerate-api.com/v4/latest/SEK';
+     const url1 = 'https://cors-anywhere.herokuapp.com/https://api.apixu.com/v1/current.json?key=c50db0b3abef447eae1131701191005&q=Stockholm';
+     const url = 'https://cors-anywhere.herokuapp.com/http://worldtimeapi.org/api/timezone/Europe/Stockholm';
+
+
+fetch(url5)
+      .then((resp) => resp.json())
+      .then(function (data5)
+    {
+      info.innerHTML += `${"The random Kanye West quote is: " + data5.quote} <br>`;
+        
+       
+    })
+
+
+
+fetch(url4)
+      .then((resp) => resp.json())
+      .then(function (data4)
+    {
+        info.innerHTML += `${data4.articles[0].author} <br>`;
+        info.innerHTML += `${data4.articles[0].title} <br>`;
+        info.innerHTML += `${data4.articles[0].description} <br>`;
+        info.innerHTML += `${data4.articles[0].content} <br>`;
+        info.innerHTML += `${"If you want to read the full article: " + data4.articles[0].url} <br>`;
+    })
+
+
+
+    fetch(url3)
+      .then((resp) => resp.json())
+      .then(function (data3) 
+      {
+        let departures = data3.ResponseData.Metros; //ResponseData och Metros är ord som SL valt.
+        return departures.map(function (departure) 
+        {
+            let divtag = document.createElement('div');
+
+            var devtext = "";
+
+            // Här kollar vi om det finns avvikelser i trafiken, t ex "Inställd"
+            if(departure.Deviations != null)
+            {
+                for(var i = 0; i < departure.Deviations.length; i++) 
+                {
+                    var obj = departure.Deviations[i];
+                    devtext += obj.Text;
+                }
+            }
+
+            divtag.innerHTML = `${departure.GroupOfLine + ":" + departure.DisplayTime + ": Linje " + departure.LineNumber + ":" + devtext}`;
+            departurediv.appendChild(divtag);
+        })
+      })
+
+
+
+
+
+fetch(url2)
+      .then((resp) => resp.json())
+      .then(function (data2)
+    {
+        info.innerHTML += `${"1SEK is: " + data2.rates.BRL + " BRL"} <br>`;
+        info.innerHTML += `${"1SEK is: " + data2.rates.USD + " USD"} <br>`;
+        info.innerHTML += `${"1SEK is: " + data2.rates.EUR + " EUR"} <br>`;
+    }) 
+
+
+
+fetch(url1)
+      .then((resp) => resp.json())
+      .then(function (data1)
+      { 
+      info.innerHTML += `${data1.location.name + " is " + data1.current.condition.text} <br>`;
+      })    
+
+
+ fetch(url)
+      .then((resp) => resp.json())
+      .then(function (data)
+       
+    {
+      info.innerHTML += `${ "Time in Stockholm: " + data.datetime.substring(11,16)} <br>`;
+       
+       
+    })
+    
+  
+
+</script>
+</body>
+</html>
+
+
+
